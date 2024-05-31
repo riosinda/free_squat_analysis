@@ -1,7 +1,53 @@
 library(caret)
 
-datos = new_dataset
+data_freesquat <- read.csv("C:/Users/josei/OneDrive/Documentos/CIIBI proyectos/Analisys Free Squat/database/data_freesquat.csv")
 
+datos = data_freesquat
+
+#best 50 galgo features
+#best_features <- c(
+#  "edad", "DOT_5_Euler_Y_dinamic_range", "DOT_5_Euler_X_dinamic_range", "DOT_3_Acc_Z_max",
+#  "DOT_4_Euler_Z_skewness", "DOT_3_Euler_Y_max", "DOT_3_Acc_X_variance", "DOT_5_Euler_Y_variance",
+#  "DOT_4_Acc_Z_variance", "DOT_1_Acc_Z_standard_deviation", "DOT_5_Acc_Z_standard_deviation", "DOT_2_Gyr_Y_kurtosis",
+#  "DOT_3_Acc_X_standard_deviation", "DOT_3_Euler_Y_mean", "peso", "DOT_3_Gyr_Y_max",
+#  "DOT_1_Euler_Z_kurtosis", "DOT_1_Acc_X_skewness", "DOT_5_Euler_X_variance", "DOT_2_Acc_X_skewness",
+#  "DOT_2_Acc_X_variance", "DOT_3_Euler_Y_dinamic_range", "DOT_4_Acc_Z_standard_deviation", "DOT_3_Acc_X_dinamic_range",
+#  "DOT_1_Gyr_X_dinamic_range", "DOT_2_Gyr_X_kurtosis", "DOT_1_Euler_Y_kurtosis", "DOT_4_Euler_X_skewness",
+#  "DOT_5_Acc_Y_skewness", "DOT_1_Gyr_Y_skewness", "DOT_5_Acc_Y_min", "DOT_1_Gyr_X_standard_deviation",
+#  "DOT_5_Euler_Y_kurtosis", "DOT_2_Gyr_Y_skewness", "DOT_3_Gyr_Y_min", "DOT_3_Euler_X_mean",
+#  "DOT_3_Gyr_Y_dinamic_range", "DOT_4_Euler_X_max", "DOT_4_Acc_X_dinamic_range", "DOT_1_Acc_Z_variance",
+#  "DOT_3_Euler_Z_skewness", "DOT_5_Gyr_Y_max", "DOT_5_Euler_X_min", "DOT_1_Gyr_X_max",
+#  "DOT_3_Acc_Y_max", "DOT_4_Gyr_Y_kurtosis", "DOT_1_Gyr_X_variance", "DOT_2_Acc_Z_variance",
+#  "DOT_2_Acc_Z_max", "DOT_2_Acc_Y_dinamic_range"
+#)
+
+#best 12 galgo features
+#best_features <- c(
+#  "edad", "DOT_5_Euler_Y_dinamic_range", "DOT_5_Euler_X_dinamic_range", "DOT_3_Acc_Z_max",
+#  "DOT_4_Euler_Z_skewness", "DOT_3_Euler_Y_max", "DOT_3_Acc_X_variance", "DOT_5_Euler_Y_variance",
+#  "DOT_4_Acc_Z_variance", "DOT_1_Acc_Z_standard_deviation", "DOT_5_Acc_Z_standard_deviation", "DOT_2_Gyr_Y_kurtosis"
+#)
+
+#best 34 forward selecction features
+best_features <- c(
+  "peso", "edad", "DOT_1_Acc_Y_skewness", "DOT_1_Acc_Z_skewness", 
+  "DOT_1_Acc_X_standard_deviation", "DOT_1_Acc_Z_dinamic_range", 
+  "DOT_2_Euler_Y_mean", "DOT_2_Euler_X_variance", 
+  "DOT_2_Euler_Y_variance", "DOT_2_Acc_X_variance", 
+  "DOT_2_Acc_Y_variance", "DOT_2_Euler_Z_skewness", 
+  "DOT_2_Acc_X_skewness", "DOT_2_Gyr_Y_skewness", 
+  "DOT_2_Euler_X_standard_deviation", "DOT_2_Acc_X_standard_deviation", 
+  "DOT_3_Euler_Z_mean", "DOT_3_Acc_Z_mean", 
+  "DOT_3_Acc_Y_variance", "DOT_3_Gyr_X_standard_deviation", 
+  "DOT_4_Euler_Y_variance", "DOT_4_Gyr_X_variance", 
+  "DOT_4_Acc_X_skewness", "DOT_4_Acc_Z_skewness", 
+  "DOT_4_Euler_X_kurtosis", "DOT_4_Euler_X_max", 
+  "DOT_4_Euler_Y_max", "DOT_5_Euler_Z_variance", 
+  "DOT_5_Acc_Y_variance", "DOT_5_Gyr_Z_variance", 
+  "DOT_5_Acc_Y_kurtosis", "DOT_5_Euler_X_standard_deviation"
+)
+
+length(best_features)
 #Seperamos en conjunto A (80%) y Conjunto B (20%)
 indices<-createDataPartition(datos$target,
                              times=1,
@@ -12,23 +58,25 @@ datosA<-datos[indices,] #contendrá el 80% de los datos originales, seleccionado
 datosB<-datos[-indices,] # contendrá el 20% restante de los datos originales, que no están presentes en datosA.
 
 
-#validación Cruzada ( crossvalidation k =3)
+#validación Cruzada ( crossvalidation k =5)
 #divide los datos de entrenamiento para (datos) en k conjutos diferentes
 indicesTrain <-createFolds(y=datosA$target,
-                           k=3, list=TRUE, #Se devolveran como una lista
+                           k=5, list=TRUE, #Se devolveran como una lista
                            returnTrain = TRUE) #Se devolderan los indices 
 
 
-##empezamos con  Fold 1
+################################################################################
+## empezamos con  Fold 1
+################################################################################
+
 datosEntrenamientoFold <-datosA[indicesTrain$Fold1,]#Selecciona los datos de entrenamiento para el primer pliegue de la validación cruzada.
 datosPruebaFold <-datosA[-indicesTrain$Fold1,] #contiene los índices de las filas en datosA que se utilizarán como datos de entrenamiento para este pliegue. Por lo tanto, 
-#datosEntrenamientoFold contendrá las filas de datosA correspondientes a este primer pliegue.
-#Entrenamos el modelo
+
 modelofold<-glm("target ~ .", 
                 data=datosEntrenamientoFold[,c(best_features,"target")],
                 family="binomial")
 
-#obtenemos el AUC de ENTRENAMIENTO en el FOLD
+#obtenemos el AUC de ENTRENAMIENTO en el FOLD 1
 library(pROC)
 prediccionesFold <-predict(modelofold, newdata = datosEntrenamientoFold,
                            type="response")
@@ -37,9 +85,9 @@ tablita<-data.frame(Original = datosEntrenamientoFold$target,
 mi_curva <- roc(tablita$Original, tablita$Predicciones,
                 levels=c(0,1), plot = TRUE, ci=TRUE,
                 smooth=FALSE, direction='auto', col="blue",
-                main="Mi curva chida")
+                main="AUC train data Fold1")
 mi_curva$auc
-#obtenemos el AUC de PRUEBA en el FOLD
+#obtenemos el AUC de PRUEBA en el FOLD 1
 prediccionesFold <-predict(modelofold, newdata = datosPruebaFold,
                            type="response")
 tablita<-data.frame(Original = datosPruebaFold$target,
@@ -47,19 +95,20 @@ tablita<-data.frame(Original = datosPruebaFold$target,
 mi_curva <- roc(tablita$Original, tablita$Predicciones,
                 levels=c(0,1), plot = TRUE, ci=TRUE,
                 smooth=FALSE, direction='auto', col="blue",
-                main="Mi curva chida")
+                main="AUC test data Fold1")
 mi_curva$auc
 
+################################################################################
+## empezamos con  Fold 2
+################################################################################
 
-
-
-##empezamos con  Fold 2
 datosEntrenamientoFold <-datosA[indicesTrain$Fold2,]
 datosPruebaFold <-datosA[-indicesTrain$Fold2,]
-#Entrenamos el modelo
+
 modelofold<-glm("target ~ .", 
                 data=datosEntrenamientoFold[,c(best_features,"target")],
                 family="binomial")
+
 #obtenemos el AUC de ENTRENAMIENTO en el FOLD
 library(pROC)
 prediccionesFold <-predict(modelofold, newdata = datosEntrenamientoFold,
@@ -69,7 +118,7 @@ tablita<-data.frame(Original = datosEntrenamientoFold$target,
 mi_curva <- roc(tablita$Original, tablita$Predicciones,
                 levels=c(0,1), plot = TRUE, ci=TRUE,
                 smooth=FALSE, direction='auto', col="blue",
-                main="Mi curva chida")
+                main="AUC train data Fold2")
 mi_curva$auc
 #obtenemos el AUC de PRUEBA en el FOLD
 prediccionesFold <-predict(modelofold, newdata = datosPruebaFold,
@@ -79,19 +128,20 @@ tablita<-data.frame(Original = datosPruebaFold$target,
 mi_curva <- roc(tablita$Original, tablita$Predicciones,
                 levels=c(0,1), plot = TRUE, ci=TRUE,
                 smooth=FALSE, direction='auto', col="blue",
-                main="Mi curva chida")
+                main="AUC test data Fold2")
 mi_curva$auc
 
+################################################################################
+## empezamos con  Fold 3
+################################################################################
 
-
-
-##empezamos con  Fold 3
 datosEntrenamientoFold <-datosA[indicesTrain$Fold3,]
 datosPruebaFold <-datosA[-indicesTrain$Fold3,]
-#Entrenamos el modelo
+
 modelofold<-glm("target ~ .", 
                 data=datosEntrenamientoFold[,c(best_features,"target")],
                 family="binomial")
+
 #obtenemos el AUC de ENTRENAMIENTO en el FOLD
 library(pROC)
 prediccionesFold <-predict(modelofold, newdata = datosEntrenamientoFold,
@@ -103,10 +153,8 @@ tablita<-data.frame(Original = datosEntrenamientoFold$target,
 mi_curva <- roc(tablita$Original, tablita$Predicciones,
                 levels=c(0,1), plot = TRUE, ci=TRUE,
                 smooth=FALSE, direction='auto', col="blue",
-                main="Mi curva chida")
+                main="AUC train data Fold3")
 mi_curva$auc
-
-
 
 #obtenemos el AUC de PRUEBA en el FOLD
 prediccionesFold <-predict(modelofold, newdata = datosPruebaFold,
@@ -114,11 +162,84 @@ prediccionesFold <-predict(modelofold, newdata = datosPruebaFold,
 tablita<-data.frame(Original = datosPruebaFold$target,
                     Predicciones = prediccionesFold)
 
+mi_curva <- roc(tablita$Original, tablita$Predicciones,
+                levels=c(0,1), plot = TRUE, ci=TRUE,
+                smooth=FALSE, direction='auto', col="blue",
+                main="AUC test data Fold3")
+mi_curva$auc
+
+################################################################################
+## empezamos con  Fold 4
+################################################################################
+
+datosEntrenamientoFold <-datosA[indicesTrain$Fold4,]
+datosPruebaFold <-datosA[-indicesTrain$Fold4,]
+
+modelofold<-glm("target ~ .", 
+                data=datosEntrenamientoFold[,c(best_features,"target")],
+                family="binomial")
+
+#obtenemos el AUC de ENTRENAMIENTO en el FOLD
+library(pROC)
+prediccionesFold <-predict(modelofold, newdata = datosEntrenamientoFold,
+                           type="response")
+tablita<-data.frame(Original = datosEntrenamientoFold$target,
+                    Predicciones = prediccionesFold)
+
 
 mi_curva <- roc(tablita$Original, tablita$Predicciones,
                 levels=c(0,1), plot = TRUE, ci=TRUE,
                 smooth=FALSE, direction='auto', col="blue",
-                main="Mi curva chida")
+                main="AUC train data Fold4")
+mi_curva$auc
+
+#obtenemos el AUC de PRUEBA en el FOLD
+prediccionesFold <-predict(modelofold, newdata = datosPruebaFold,
+                           type="response")
+tablita<-data.frame(Original = datosPruebaFold$target,
+                    Predicciones = prediccionesFold)
+
+mi_curva <- roc(tablita$Original, tablita$Predicciones,
+                levels=c(0,1), plot = TRUE, ci=TRUE,
+                smooth=FALSE, direction='auto', col="blue",
+                main="AUC test data Fold4")
+mi_curva$auc
+
+################################################################################
+## empezamos con  Fold 5
+################################################################################
+
+datosEntrenamientoFold <-datosA[indicesTrain$Fold5,]
+datosPruebaFold <-datosA[-indicesTrain$Fold5,]
+
+modelofold<-glm("target ~ .", 
+                data=datosEntrenamientoFold[,c(best_features,"target")],
+                family="binomial")
+
+#obtenemos el AUC de ENTRENAMIENTO en el FOLD
+library(pROC)
+prediccionesFold <-predict(modelofold, newdata = datosEntrenamientoFold,
+                           type="response")
+tablita<-data.frame(Original = datosEntrenamientoFold$target,
+                    Predicciones = prediccionesFold)
+
+
+mi_curva <- roc(tablita$Original, tablita$Predicciones,
+                levels=c(0,1), plot = TRUE, ci=TRUE,
+                smooth=FALSE, direction='auto', col="blue",
+                main="AUC train data Fold5")
+mi_curva$auc
+
+#obtenemos el AUC de PRUEBA en el FOLD
+prediccionesFold <-predict(modelofold, newdata = datosPruebaFold,
+                           type="response")
+tablita<-data.frame(Original = datosPruebaFold$target,
+                    Predicciones = prediccionesFold)
+
+mi_curva <- roc(tablita$Original, tablita$Predicciones,
+                levels=c(0,1), plot = TRUE, ci=TRUE,
+                smooth=FALSE, direction='auto', col="blue",
+                main="AUC test data Fold5")
 mi_curva$auc
 
 
@@ -153,7 +274,7 @@ tablita1<-data.frame(Original = datosA$target,
 mi_curva <- roc(tablita$Original, tablita$Predicciones,
                 levels=c(0,1), plot = TRUE, ci=TRUE,
                 smooth=FALSE, direction='auto', col="blue",
-                main="Mi curva chida")
+                main="AUC train data representative model")
 
 
 mi_curva$auc
@@ -182,10 +303,10 @@ tablita1<-data.frame(Original = datosA$target,
 
 
 
-mi_curva <- roc(tablita$Original, tablita$Predicciones,
+mi_curva <- roc(tablita1$Original, tablita1$Predicciones,
                 levels=c(0,1), plot = TRUE, ci=TRUE,
                 smooth=FALSE, direction='auto', col="blue",
-                main="Mi curva chida")
+                main="AUC test data representative model")
 mi_curva$auc
 
 #Obtenemos especifidad del entrenamiento
