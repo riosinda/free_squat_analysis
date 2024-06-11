@@ -1,7 +1,7 @@
 {
     "installOptions": {
         "installFromRepository": true,
-        "libraryPath": "C:/Users/josei/AppData/Local/R/win-library/4.3",
+        "libraryPath": "C:/Users/josei/Documents/R/win-library/4.1",
         "installDependencies": true
     }
 }
